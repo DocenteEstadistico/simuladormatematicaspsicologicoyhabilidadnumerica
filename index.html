@@ -54,23 +54,52 @@ const tests = {
       easy: [
         { q: '¿Cuánto es 3 + 5?', options: ['5', '7', '8', '10'], answer: 2 },
         { q: '¿Cuánto es 12 - 4?', options: ['6', '8', '10', '12'], answer: 1 },
-        { q: '¿Cuánto es 5 x 2?', options: ['7', '10', '12', '15'], answer: 1 }
+        { q: '¿Cuánto es 5 x 2?', options: ['7', '10', '12', '15'], answer: 1 },
+        { q: '¿Cuánto es 16 ÷ 4?', options: ['2', '3', '4', '5'], answer: 2 },
+        { q: '¿Cuál es el doble de 6?', options: ['10', '12', '14', '16'], answer: 1 },
+        { q: '¿Cuánto es 9 + 3?', options: ['11', '12', '13', '14'], answer: 1 },
+        { q: '¿Cuánto es 10 - 7?', options: ['2', '3', '4', '5'], answer: 1 },
+        { q: '¿Cuál es el triple de 3?', options: ['6', '9', '12', '15'], answer: 1 },
+        { q: '¿Cuánto es 2 x 6?', options: ['10', '11', '12', '13'], answer: 2 },
+        { q: '¿Cuánto es 18 ÷ 3?', options: ['5', '6', '7', '8'], answer: 1 }
       ],
       medium: [
         { q: '¿Cuánto es 15 x 2?', options: ['20', '25', '30', '35'], answer: 2 },
         { q: '¿Cuánto es 100 ÷ 5?', options: ['15', '20', '25', '30'], answer: 1 },
-        { q: '¿Cuánto es 12²?', options: ['124', '134', '144', '154'], answer: 2 }
+        { q: '¿Cuánto es 12²?', options: ['124', '134', '144', '154'], answer: 2 },
+        { q: '¿Cuánto es la raíz cuadrada de 81?', options: ['7', '8', '9', '10'], answer: 2 },
+        { q: '¿Cuánto es 11 x 11?', options: ['111', '121', '131', '141'], answer: 1 },
+        { q: '¿Cuánto es 10 x 10?', options: ['100', '110', '120', '130'], answer: 0 },
+        { q: '¿Cuál es el resultado de 6 x 7?', options: ['42', '46', '49', '52'], answer: 0 },
+        { q: '¿Cuánto es 64 ÷ 8?', options: ['6', '7', '8', '9'], answer: 2 },
+        { q: '¿Cuánto es 9 x 9?', options: ['72', '81', '90', '99'], answer: 1 },
+        { q: '¿Cuánto es 14 + 16?', options: ['28', '30', '32', '34'], answer: 1 }
       ],
-      hard: [
+     hard: [
         { q: 'Resuelve: 2x = 18', options: ['7', '8', '9', '10'], answer: 2 },
+        { q: '¿Qué número falta? 3, 6, 9, ?, 15', options: ['10', '11', '12', '13'], answer: 2 },
+        { q: '¿Cuánto es 5²?', options: ['10', '15', '20', '25'], answer: 3 },
         { q: '¿Cuánto es (2+3) x 4?', options: ['16', '20', '22', '24'], answer: 1 },
-        { q: '¿Cuál es la raíz cuadrada de 121?', options: ['9', '10', '11', '12'], answer: 2 }
+        { q: '¿Cuánto es 81 ÷ 9?', options: ['8', '9', '10', '11'], answer: 1 },
+        { q: '¿Cuál es la raíz cuadrada de 121?', options: ['9', '10', '11', '12'], answer: 2 },
+        { q: '¿Cuál es el resultado de 3³?', options: ['9', '18', '27', '36'], answer: 2 },
+        { q: '¿Cuánto es 50% de 60?', options: ['25', '30', '35', '40'], answer: 1 },
+        { q: '¿Cuánto es ¼ de 100?', options: ['20', '25', '30', '35'], answer: 1 },
+        { q: '¿Qué número sigue? 2, 4, 8, 16, ?', options: ['20', '24', '30', '32'], answer: 3 }
       ],
       veryhard: [
         { q: 'Resuelve: (3x - 2) = 10, ¿cuánto vale x?', options: ['4', '5', '6', '7'], answer: 0 },
         { q: 'Si f(x) = 2x + 1, ¿cuánto es f(3)?', options: ['6', '7', '8', '9'], answer: 1 },
-        { q: '¿Factoriza: x² - 9?', options: ['(x+3)(x-3)', '(x-3)(x-3)', '(x+9)(x-1)', '(x+3)(x+3)'], answer: 0 }
+        { q: '¿Cuál es la pendiente de la recta y = 3x + 2?', options: ['2', '3', '4', '5'], answer: 1 },
+        { q: '¿Factoriza: x² - 9?', options: ['(x+3)(x-3)', '(x-3)(x-3)', '(x+9)(x-1)', '(x+3)(x+3)'], answer: 0 },
+        { q: '¿Cuánto es log₁₀(100)?', options: ['1', '2', '3', '4'], answer: 1 },
+        { q: 'Resuelve: x² = 49', options: ['5', '6', '7', '8'], answer: 2 },
+        { q: '¿Resultado de 2(x + 3) = 14?', options: ['3', '4', '5', '6'], answer: 1 },
+        { q: 'Resuelve el sistema: x + y = 10, x - y = 2', options: ['x=6, y=4', 'x=5, y=5', 'x=4, y=6', 'x=7, y=3'], answer: 0 },
+        { q: '¿Cuál es el discriminante de x² - 4x + 4 = 0?', options: ['0', '4', '8', '16'], answer: 0 },
+        { q: '¿Cuál es el valor absoluto de -12?', options: ['-12', '0', '12', '24'], answer: 2 }
       ],
+       // --- INICIO DEL TEST 1 PREUNIVERSITARIO INTEGRADO ---
       preuni1: [
         { q: '¿Cuál es el resultado de 4 + 1/2?', options: ['5/2', '8/2', '9/2', '6/2'], answer: 2 },
         { q: '¿Cuál es el resultado de -3/2 + 1/2?', options: ['-7/6', '-2/5', '3/6', '3/5'], answer: 0 },
@@ -86,20 +115,46 @@ const tests = {
         { q: 'En la figura, ¿cuánto mide el lado b?', image: 'ejercicio12.png', options: ['2 cm', '√2 cm', '√3 cm', '1 cm'], answer: 3 },
         { q: '¿Cuál es la solución de 3x - 5 = 2x + 1?', options: ['x = 6', 'x = -6', 'x = -4', 'x = 4'], answer: 0 },
         { q: '¿Cuál es la solución de -2(3x - 1) = -4x - 8?', options: ['x = 3', 'x = -9/2', 'x = -1', 'x = 5'], answer: 3 },
-        { q: 'Qué número es solución de x<sup>2</sup> - 4 = 0?', options: ['√2', '1/2', '4', '-2'], answer: 3 },
+        { q: '¿Qué número es solución de x<sup>2</sup> - 4 = 0?', options: ['√2', '1/2', '4', '-2'], answer: 3 },
         { q: '¿Qué número es solución de x<sup>2</sup> - x - 6 = 0?', options: ['x = 3', 'x = 2', 'x = 6', 'x = 4'], answer: 0 },
         { q: '¿Qué intervalo representa la solución de 3x + 2 ≤ 11?', options: [']3, +∞[', ']-∞, 3]', ']-∞, -3]', '[-3, +∞['], answer: 1 },
         { q: '¿Cuál de los números pertenece a la solución de 3 - 2x ≤ 9?', options: ['-4', '-5', '-2', '-10'], answer: 2 },
-        { q: 'Cuál es la factorización de 15x<sup>3</sup> + 20x<sup>2</sup>?', options: ['(5x + 4)(3x + 5)', '5x<sup>2</sup>(3x + 4)', '3x(5x<sup>2</sup> + 7)', '(5x - 4)(3x + 5)'], answer: 1 },
+        { q: '¿Cuál es la factorización de 15x<sup>3</sup> + 20x<sup>2</sup>?', options: ['(5x + 4)(3x + 5)', '5x<sup>2</sup>(3x + 4)', '3x(5x<sup>2</sup> + 7)', '(5x - 4)(3x + 5)'], answer: 1 },
         { q: '¿Cuál es la factorización de x<sup>2</sup> + 9x + 20?', options: ['(x + 10)(x + 2)', '(x + 20)(x + 1)', '(x - 10)(x + 2)', '(x + 4)(x + 5)'], answer: 3 },
-        { q: 'Cuál es la factorización de 4x<sup>2</sup> - 16?', options: ['(2x + 8)(2x - 2)', '(4x + 4)(x + 4)', '(2x - 4)(2x + 4)', '(4x + 4)(x - 4)'], answer: 2 },
+        { q: '¿Cuál es la factorización de 4x<sup>2</sup> - 16?', options: ['(2x + 8)(2x - 2)', '(4x + 4)(x + 4)', '(2x - 4)(2x + 4)', '(4x + 4)(x - 4)'], answer: 2 },
         { q: 'Si P(x) = 3x<sup>2</sup> - 5x, ¿cuál es el valor de P(3)?', options: ['12', '13', '3', '6'], answer: 0 },
         { q: 'Si x = -2, y = 3, ¿cuál es el valor de 5xy - y<sup>2</sup>?', options: ['-3', '-21', '-36', '-39'], answer: 3 },
         { q: 'Una recta tiene pendiente 3 y pasa por el punto (0, 2). ¿Cuál es la ecuación de esta recta?', options: ['y = 3x + 2', 'y = 6x + 1', 'y = 2x + 3', 'y = x + 6'], answer: 0 },
-        { q: 'Qué ecuación pasa por el punto (-1, 3)?', options: ['y = -2x - 1', 'y = -x + 2', 'y = x + 2', 'y = 2x + 1'], answer: 1 }
+        { q: '¿Qué ecuación pasa por el punto (-1, 3)?', options: ['y = -2x - 1', 'y = -x + 2', 'y = x + 2', 'y = 2x + 1'], answer: 1 },
       ],
+     
+      // Test 2 Preuniversitario - VERSIÓN FINAL
       preuni2: [
-        { q: 'Pregunta de ejemplo para Test 2', options: ['a', 'b', 'c', 'd'], answer: 0 }
+        { q: '¿Qué número está representado en el plano complejo?', image: 'ejercicio1preuni2.png', options: ['-2 + i', '2 + i', '-2 - i', '2 - i'], answer: 0 },
+        { q: '¿Qué número está representado en el plano complejo?', image: 'ejercicio2preuni2.png', options: ['-3 + i', '3 + i', '-3 - i', '3 - i'], answer: 3 },
+        { q: 'Dados los números complejos z₁ = 1 + i, z₂ = 3 + 5i. ¿Cuál es el resultado de z₁ + z₂?', options: ['2 + 3i', '3 + 5i', '4 + 5i', '4 + 6i'], answer: 3 },
+        { q: 'Dados los números complejos z₁ = -5i, z₂ = -1 - i. ¿Cuál es el resultado de z₁ + z₂?', options: ['-6i', '-7i', '-1 - 6i', '-1 - 7i'], answer: 2 },
+        { q: 'Dados los números complejos z₁ = 3 + i, z₂ = 2 + 5i. ¿Cuál es el resultado de z₁ - z₂?', options: ['1 - 4i', '-1 + 4i', '1 - 5i', '-1 + 5i'], answer: 0 },
+        { q: 'Dados los números complejos z₁ = 2 + i, z₂ = 5 + 3i. ¿Cuál es el resultado de z₁ × z₂?', options: ['7 + 4i', '10 + 3i', '7 + 11i', '10 + 3i²'], answer: 2 },
+        { q: 'Dados los números complejos z₁ = -3, z₂ = -4 + 2i. ¿Cuál es el resultado de z₁ × z₂?', options: ['-12 + 6i', '12 + 2i', '-12 + 2i', '12 - 6i'], answer: 3 },
+        { q: 'En el triángulo rectángulo ABC, ¿cuál es la longitud del lado BC?', image: 'ejercicio8preuni2.png', options: ['36', '18', '6', '2'], answer: 2 },
+        { q: 'En el triángulo rectángulo ABC, ¿cuál es la longitud del lado AB?', image: 'ejercicio9preuni2.png', options: ['2', '√2', '3/2', '1'], answer: 1 },
+        { q: 'Si un ángulo mide 90°, ¿cuál es su medida en radianes?', options: ['5π / 6', 'π / 2', 'π / 3', 'π / 4'], answer: 1 },
+        { q: 'Si un ángulo mide π/6 radianes, ¿cuál es su medida en grados?', options: ['75°', '60°', '45°', '30°'], answer: 3 },
+        { q: 'En un triángulo rectángulo, ¿cuál es el valor de cos(θ)?', image: 'ejercicio12preuni2.png', options: ['cos(θ) = 2 / 3', 'cos(θ) = √5 / 3', 'cos(θ) = 3 / 2', 'cos(θ) = 2 / √5'], answer: 1 },
+        { q: 'En el triángulo rectángulo, ¿cuál es el valor de tan(θ)?', image: 'ejercicio13preuni2.png', options: ['tan(θ) = 8 / 15', 'tan(θ) = 15 / 17', 'tan(θ) = 15 / 8', 'tan(θ) = 8 / 17'], answer: 0 },
+        { q: 'En el triángulo rectángulo, ¿cuál es el valor de sen(θ)?', image: 'ejercicio14preuni2.png', options: ['sen(θ) = 3 / 4', 'sen(θ) = 3 / 5', 'sen(θ) = 4 / 3', 'sen(θ) = 4 / 5'], answer: 1 },
+        { q: '¿Cuál es el valor de cos(50°)? (Use calculadora)', options: ['0.766', '0.643', '0.555', '0.5'], answer: 1 },
+        { q: 'Si tan(θ) = 0.75, ¿cuál es la medida, en grados, del ángulo θ?', options: ['36.87°', '40°', '48.59°', '75°'], answer: 0 },
+        { q: '¿Cuál es una función lineal?', options: ['y = (3 / x) + 2', 'y = x² + 3', 'y = (2 / 3)x + 2', 'y = x³ + 3'], answer: 2 },
+        { q: 'En la función y = –5x + 4, ¿cuál es la pendiente?', options: ['4', '–5 / 4', '–5', '4 / 5'], answer: 2 },
+        { q: 'La recta que pasa por los puntos (1, 3) y (4, 9), ¿qué pendiente tiene?', options: ['m = 1/2', 'm = 2', 'm = 5/2', 'm = 5'], answer: 1 },
+        { q: '¿Cuál es la ecuación de la recta que pasa por el punto (0, 3) y tiene pendiente m = 2?', options: ['y = 2x + 3', 'y = 3x + 2', 'y = –2x + 3', 'y = –3x + 2'], answer: 0 },
+        { q: '¿Cuál es la solución del sistema?<br>2x + y = 4<br>3x - y = 1', options: ['x = 2, y = 5', 'x = –1, y = 6', 'x = –2, y = 8', 'x = 1, y = 2'], answer: 3 },
+        { q: '¿Cuál es la factorización de 3x² + 5x?', options: ['(3x + 1)(x + 5)', '(x + 3)(3x + 5)', 'x(3x + 5)', 'x²(3x + 5)'], answer: 2 },
+        { q: '¿Cuál es la factorización de x² + 6x + 9?', options: ['(x + 1)(x + 9)', '(x + 3)(x – 3)', '(x + 3)²', '(x – 3)'], answer: 2 },
+        { q: '¿Cuál es la factorización de x² – 4?', options: ['(x + 1)(x – 4)', '(x – 2)(x + 2)', 'x(x – 4)', '(x – 2)²'], answer: 1 },
+        { q: '¿Cuál es la factorización de x² + 6x + 5?', options: ['(x + 1)(x + 5)', '(x – 5)(x – 1)', '(x + 2)(x + 3)', '(x + 5)(x + 6)'], answer: 0 },
       ],
       psicologico: [
         { q: 'Lo opuesto al odio es:', options: ['enemigo', 'temor', 'amor', 'amigo', 'alegría'], answer: 2 },
