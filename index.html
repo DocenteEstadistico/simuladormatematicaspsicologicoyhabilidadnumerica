@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MaIAnMath - Simulador de Matemáticas</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; background-color: #f5f5f5; }
+    header { text-align: center; margin-bottom: 30px; }
+    header img { max-width: 150px; margin-bottom: 10px; }
+    header h1 { margin: 0; font-size: 2em; color: #333; }
+    header p { font-size: 1em; color: #555; }
+    #timer { font-size: 1.5em; font-weight: bold; text-align: center; margin: 20px 0; color: #dc3545; }
+    .question { margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    .result { font-weight: bold; font-size: 1.2em; margin-top: 20px; text-align: center; }
+    button { padding: 10px 15px; margin-top: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; border: none; background-color: #007bff; color: white; }
+    button:hover { background-color: #0056b3; }
+    .hidden { display: none; }
+    .correct { background-color: #d4edda; border-left: 5px solid #28a745; }
+    .incorrect { background-color: #f8d7da; border-left: 5px solid #dc3545; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="MaIA.webp" alt="Logo MaIAnMath">
+    <h1>MaIAnMath</h1>
+    <p>Simulador Diagnóstico de Matemáticas<br>Selecciona tu nivel de dificultad y demuestra lo que sabes.</p>
+  </header>
+
+  <label for="difficulty">Selecciona la prueba:</label>
+  <select id="difficulty">
+    <option value="easy">Fácil (5 min)</option>
+    <option value="medium">Intermedio (5 min)</option>
+    <option value="hard">Difícil (10 min)</option>
+    <option value="veryhard">Muy Difícil (10 min)</option>
+    <option value="preuni1">Test 1 Preuniversitario (10 min)</option>
+    <option value="preuni2">Test 2 Preuniversitario (10 min)</option>
+    <option value="psicologico">Test Psicológico (30 min)</option>
+  </select>
+  <button onclick="loadTest()">Iniciar Test</button>
+
+  <div id="timer" class="hidden"></div>
+  
+  <form id="testForm" class="hidden" onsubmit="return gradeTest(event)">
+    <div id="questions"></div>
+    <button type="submit">Enviar Respuestas</button>
+  </form>
+  <div class="result" id="result"></div>
+
+  <script>
+    // Variable global para el intervalo del temporizador
+    let timerInterval;
+    
+const tests = {
+      easy: [
+        { q: '¿Cuánto es 3 + 5?', options: ['5', '7', '8', '10'], answer: 2 },
+        { q: '¿Cuánto es 12 - 4?', options: ['6', '8', '10', '12'], answer: 1 },
+        { q: '¿Cuánto es 5 x 2?', options: ['7', '10', '12', '15'], answer: 1 }
+      ],
+      medium: [
+        { q: '¿Cuánto es 15 x 2?', options: ['20', '25', '30', '35'], answer: 2 },
+        { q: '¿Cuánto es 100 ÷ 5?', options: ['15', '20', '25', '30'], answer: 1 },
+        { q: '¿Cuánto es 12²?', options: ['124', '134', '144', '154'], answer: 2 }
+      ],
+      hard: [
+        { q: 'Resuelve: 2x = 18', options: ['7', '8', '9', '10'], answer: 2 },
+        { q: '¿Cuánto es (2+3) x 4?', options: ['16', '20', '22', '24'], answer: 1 },
+        { q: '¿Cuál es la raíz cuadrada de 121?', options: ['9', '10', '11', '12'], answer: 2 }
+      ],
+      veryhard: [
+        { q: 'Resuelve: (3x - 2) = 10, ¿cuánto vale x?', options: ['4', '5', '6', '7'], answer: 0 },
+        { q: 'Si f(x) = 2x + 1, ¿cuánto es f(3)?', options: ['6', '7', '8', '9'], answer: 1 },
+        { q: '¿Factoriza: x² - 9?', options: ['(x+3)(x-3)', '(x-3)(x-3)', '(x+9)(x-1)', '(x+3)(x+3)'], answer: 0 }
+      ],
+      preuni1: [
+        { q: '¿Cuál es el resultado de 4 + 1/2?', options: ['5/2', '8/2', '9/2', '6/2'], answer: 2 },
+        { q: '¿Cuál es el resultado de -3/2 + 1/2?', options: ['-7/6', '-2/5', '3/6', '3/5'], answer: 0 },
+        { q: '¿Cuál es el resultado de -4/5 - (-3) - 2/3?', options: ['1/15', '23/15', '-5/15', '-9/15'], answer: 1 },
+        { q: '¿Cuál es el resultado de 3√16 - 2√25?', options: ['-2', '14', '2', '-14'], answer: 2 },
+        { q: '¿Cuál es el resultado de -4√5 + √5?', options: ['-3√5', '-4√5', '-3√10', '-4√10'], answer: 0 },
+        { q: '¿Qué número señala la flecha en la figura?', image: 'ejercicio6.png', options: ['2/3', '5/2', '8/3', '9/4'], answer: 2 },
+        { q: '¿Qué número es mayor que -5/4?', options: ['-1', '-3/2', '-1 3/4', '-2'], answer: 0 },
+        { q: 'Aproximadamente, ¿qué número señala la flecha?', image: 'ejercicio8.png', options: ['-2.25', '-7/4', '-1.25', '-3/2'], answer: 1 },
+        { q: '¿Qué intervalo representa la gráfica?', image: 'ejercicio9.png', options: [']-2, 0[', '[-2, 0]', '[-2, 0[', ']-2, 0]'], answer: 3 },
+        { q: '¿Qué gráfica corresponde a la notación x ≥ -1?', image: 'ejercicio10.png', options: ['Opción A', 'Opción B', 'Opción C', 'Opción D'], answer: 0 },
+        { q: 'En la figura, ¿cuánto mide el lado c?', image: 'ejercicio11.png', options: ['√5 cm', '√3 cm', '3 cm', '5 cm'], answer: 0 },
+        { q: 'En la figura, ¿cuánto mide el lado b?', image: 'ejercicio12.png', options: ['2 cm', '√2 cm', '√3 cm', '1 cm'], answer: 3 },
+        { q: '¿Cuál es la solución de 3x - 5 = 2x + 1?', options: ['x = 6', 'x = -6', 'x = -4', 'x = 4'], answer: 0 },
+        { q: '¿Cuál es la solución de -2(3x - 1) = -4x - 8?', options: ['x = 3', 'x = -9/2', 'x = -1', 'x = 5'], answer: 3 },
+        { q: 'Qué número es solución de x<sup>2</sup> - 4 = 0?', options: ['√2', '1/2', '4', '-2'], answer: 3 },
+        { q: '¿Qué número es solución de x<sup>2</sup> - x - 6 = 0?', options: ['x = 3', 'x = 2', 'x = 6', 'x = 4'], answer: 0 },
+        { q: '¿Qué intervalo representa la solución de 3x + 2 ≤ 11?', options: [']3, +∞[', ']-∞, 3]', ']-∞, -3]', '[-3, +∞['], answer: 1 },
+        { q: '¿Cuál de los números pertenece a la solución de 3 - 2x ≤ 9?', options: ['-4', '-5', '-2', '-10'], answer: 2 },
+        { q: 'Cuál es la factorización de 15x<sup>3</sup> + 20x<sup>2</sup>?', options: ['(5x + 4)(3x + 5)', '5x<sup>2</sup>(3x + 4)', '3x(5x<sup>2</sup> + 7)', '(5x - 4)(3x + 5)'], answer: 1 },
+        { q: '¿Cuál es la factorización de x<sup>2</sup> + 9x + 20?', options: ['(x + 10)(x + 2)', '(x + 20)(x + 1)', '(x - 10)(x + 2)', '(x + 4)(x + 5)'], answer: 3 },
+        { q: 'Cuál es la factorización de 4x<sup>2</sup> - 16?', options: ['(2x + 8)(2x - 2)', '(4x + 4)(x + 4)', '(2x - 4)(2x + 4)', '(4x + 4)(x - 4)'], answer: 2 },
+        { q: 'Si P(x) = 3x<sup>2</sup> - 5x, ¿cuál es el valor de P(3)?', options: ['12', '13', '3', '6'], answer: 0 },
+        { q: 'Si x = -2, y = 3, ¿cuál es el valor de 5xy - y<sup>2</sup>?', options: ['-3', '-21', '-36', '-39'], answer: 3 },
+        { q: 'Una recta tiene pendiente 3 y pasa por el punto (0, 2). ¿Cuál es la ecuación de esta recta?', options: ['y = 3x + 2', 'y = 6x + 1', 'y = 2x + 3', 'y = x + 6'], answer: 0 },
+        { q: 'Qué ecuación pasa por el punto (-1, 3)?', options: ['y = -2x - 1', 'y = -x + 2', 'y = x + 2', 'y = 2x + 1'], answer: 1 }
+      ],
+      preuni2: [
+        { q: 'Pregunta de ejemplo para Test 2', options: ['a', 'b', 'c', 'd'], answer: 0 }
+      ],
+      psicologico: [
+        { q: 'Lo opuesto al odio es:', options: ['enemigo', 'temor', 'amor', 'amigo', 'alegría'], answer: 2 },
+        { q: 'Si tres lápices cuestan cinco pesos, ¿cuántos lápices podré comprar con cincuenta pesos?', options: ['10', '20', '30', '40', '50'], answer: 2 },
+        { q: 'Un pájaro no siempre tiene:', options: ['alas', 'ojos', 'patas', 'nido', 'pico'], answer: 3 },
+        { q: 'Lo opuesto a honor es:', options: ['derrota', 'villanía', 'humillación', 'cobardía', 'miedo'], answer: 1 },
+        { q: 'El zorro se parece más a:', options: ['el lobo', 'la cabra', 'el cerdo', 'el tigre', 'el gato'], answer: 0 },
+        { q: 'El silencio tiene la misma relación con el sonido que la oscuridad con:', options: ['sótano', 'luz', 'ruido', 'quietud', 'noche'], answer: 1 },
+        { q: 'Un grupo consistía en dos matrimonios, dos hermanos y dos hermanas. ¿Cuál es el número mínimo de personas que podrían componer el grupo?', options: ['2', '3', '4', '5', '6'], answer: 2 },
+        { q: 'Un árbol siempre tiene:', options: ['hojas', 'fruto', 'yemas', 'raíces', 'sombra'], answer: 3 },
+        { q: 'Lo opuesto de lo económico es:', options: ['barato', 'avaro', 'gastador', 'valor', 'rico'], answer: 2 },
+        { q: 'La plata es más cara que el hierro porque es:', options: ['más pesada', 'más escasa', 'más blanca', 'más dura', 'más hermosa'], answer: 1 },
+        { q: 'Cuál de las seis razones expresa el significado del refrán: "Comida hecha, compañía deshecha"?', options: ['No hay que separarse de los amigos después de comer', 'No se debe olvidar el beneficio recibido y alejarse de quien lo dio', 'A nada conduce prolongar demasiado un asunto', 'La mayor dificultad en cualquier cosa consiste, por lo común, en los principios', 'Es peligroso prolongar la sobremesa', 'Cada uno debe mirar antes por sí mismo que por los otros'], answer: 1 },
+        { q: 'Cuál de las seis razones del No. 11 expresa el refrán: "Obra empezada, medio acabada"?', options: ['No hay que separarse de los amigos después de comer', 'No se debe olvidar el beneficio recibido y alejarse de quien lo dio', 'A nada conduce prolongar demasiado un asunto', 'La mayor dificultad en cualquier cosa consiste, por lo común, en los principios', 'Es peligroso prolongar la sobremesa', 'Cada uno debe mirar antes por sí mismo que por los otros'], answer: 3 },
+        { q: 'Cuál de las seis razones del No. 11 explica el proverbio: "Antes son mis dientes que mis parientes"?', options: ['No hay que separarse de los amigos después de comer', 'No se debe olvidar el beneficio recibido y alejarse de quien lo dio', 'A nada conduce prolongar demasiado un asunto', 'La mayor dificultad en cualquier cosa consiste, por lo común, en los principios', 'Es peligroso prolongar la sobremesa', 'Cada uno debe mirar antes por sí mismo que por los otros'], answer: 5 },
+        { q: 'Una luz eléctrica se relaciona con la bujía (vela de alumbrar) como un automóvil se relaciona con:', options: ['un carruaje', 'la electricidad', 'una llanta', 'la velocidad', 'el resplandor'], answer: 0 },
+        { q: 'Si un caballo puede correr a la velocidad de 6 metros en un 1/4 de segundo ¿Cuántos metros corre en 10 segundos?', options: ['120 metros', '180 metros', '200 metros', '240 metros', '260 metros'], answer: 3 },
+        { q: 'Una comida siempre supone:', options: ['mesa', 'plato', 'hambre', 'alimento', 'agua'], answer: 3 },
+        { q: 'De las cinco palabras siguientes cuatro son parecidas ¿Cuál es la que no es parecida a esas cuatro?', options: ['postre', 'lima', 'pato', 'papel', 'claro'], answer: 0 },
+        { q: 'Lo opuesto a nunca es:', options: ['a menudo', 'a veces', 'frecuentemente', 'siempre', 'de vez en cuando'], answer: 3 },
+        { q: 'Un reloj tiene con el tiempo la misma relación que un termómetro con:', options: ['un reloj', 'caliente', 'tubo', 'mercurio', 'temperatura'], answer: 4 },
+        { q: 'Cuál de las siguientes palabras debería ponerse en el espacio en blanco para que sea cierta la afirmación" los hombres son más bajos que sus esposas"', options: ['siempre', 'a menudo', 'a veces', 'raras veces', 'nunca'], answer: 2 },
+        { q: 'En la siguiente serie hay un número equivocado ¿Cuál debería ocupar su lugar? 1-4-2-5-3-6-4-7-5-9-6-9', options: ['9', '8', '6', '7', '4'], answer: 1 },
+        { q: 'Si las dos primeras proposiciones son ciertas la tercera es: "Todos los miembros de este club son Argentinos" "Conzález no es Argentino" "Conzález es miembro de este club"', options: ['verdadera', 'falsa', 'dudosa'], answer: 1 },
+        { q: 'Una lucha siempre tiene:', options: ['réferi', 'contendientes', 'espectadores', 'aplausos', 'victoria'], answer: 1 },
+        { q: '¿Cuál de los números de esta serie aparece antes por segunda vez? 6-4-5-3-7-0-9-5-9-8-8-6-5-4-7-3-0-8-9', options: ['8', '9', '5', '4', '3'], answer: 2 },
+        { q: 'La luna se relaciona con la tierra como la tierra con:', options: ['Marte', 'el sol', 'las nubes', 'las estrellas', 'el universo'], answer: 1 },
+        { q: '¿Qué palabra hace falta para que sea verdadera la siguiente proposición? "Los padres son más prudentes que los hijos"', options: ['siempre', 'usualmente', 'mucho', 'raras veces', 'nunca'], answer: 1 },
+        { q: 'Lo opuesto a torpe es:', options: ['fuerte', 'bonito', 'corto', 'hábil', 'rápido'], answer: 3 },
+        { q: 'Una madre siempre es_ que su hija"', options: ['más sabia', 'más alta', 'más gruesa', 'más vieja', 'más arrugada'], answer: 3 },
+        { q: 'Cuál de las cinco proposiciones indica el significado del proverbio "Haz bien y guardate"?', options: ['El bien ha de hacerse desinteresadamente', 'Nunca se hace el bien sin ningún provecho', 'Hay que obrar bien y no publicarlo', 'Hay que hacer el bien al enemigo', 'Los ingratos pagan con malas obras el bien que se les hace'], answer: 2 },
+        { q: 'Cuál de las proposiciones del No. 29 explica el proverbio: "Haz bien y no mires a quien"?', options: ['El bien ha de hacerse desinteresadamente', 'Nunca se hace el bien sin ningún provecho', 'Hay que obrar bien y no publicarlo', 'Hay que hacer el bien al enemigo', 'Los ingratos pagan con malas obras el bien que se les hace'], answer: 3 },
+        { q: 'Cuál de las proposiciones del No. 29 explica el proverbio: "Haz buena harina y no toques bocina"?', options: ['El bien ha de hacerse desinteresadamente', 'Nunca se hace el bien sin ningún provecho', 'Hay que obrar bien y no publicarlo', 'Hay que hacer el bien al enemigo', 'Los ingratos pagan con malas obras el bien que se les hace'], answer: 2 },
+        { q: 'Cuando un individuo enajena su propiedad es porque:', options: ['la compra', 'la vende', 'la devuelve', 'la presta', 'la regala'], answer: 1 },
+        { q: 'Qué se relaciona con enfermedad, como cuidado se relaciona con accidente?', options: ['doctor', 'cirugía', 'medicina', 'hospital', 'salubridad'], answer: 2 },
+        { q: 'De estas cinco cosas, cuatro son parecidas en algo ¿Cuál es la que no pertenece a ese grupo?', options: ['contrabando', 'robo', 'calma', 'estafa', 'venta'], answer: 2 },
+        { q: 'Si diez cajas llenas de manzanas pesan cuatrocientos kilogramos ¿Cuánto pesan sólo las manzanas, si cada caja pesa 4 kilogramos vacía?', options: ['340 kg', '350 kg', '360 kg', '370 kg', '380 kg'], answer: 2 },
+        { q: 'Lo opuesto de esperanza es:', options: ['fe', 'desaliento', 'tristeza', 'desgracia', 'odio'], answer: 1 },
+        { q: 'Si todas las letras que ocupan números impares se cruzaran ¿Cuál sería la décima letra no cruzada (No haga marcas en el alfabeto) ABCDEFGHIJKLMNNOPQRSTUVWXYZ', options: ['S', 'T', 'U', 'V', 'W'], answer: 0 },
+        { q: '¿Qué letra en la palabra METACRÓMICO, ocupa el mismo lugar, contando desde el principio en dicha palabra y en el alfabeto? (no cuente la Ch, como letra).', options: ['A', 'B', 'C', 'D', 'E'], answer: 0 },
+        { q: 'Lo que la gente dice de una persona constituye su:', options: ['carácter', 'murmuración', 'reputación', 'disposición', 'personalidad'], answer: 2 },
+        { q: 'Si 2 1⁄2 mts. de tela cuestan 30 pesos ¿Cuánto cuestan 10 metros?', options: ['90 pesos', '100 pesos', '110 pesos', '120 pesos', '130 pesos'], answer: 3 },
+        { q: 'Si las palabras siguientes se ordenaran a modo de formar una oración con sentido ¿Con que letra terminaría la última palabra? (Escriba la letra con mayúscula). SINCERIDAD, LA, RASCOS, CORTESÍA, LA, CARÁCTER, DE, DESEABLES, Y, SON', options: ['B', 'C', 'S', 'Q', 'L'], answer: 0 },
+        { q: 'Si las primeras dos proposiciones son verdaderas, la tercera es: "Jorge es mayor que Paco" "Jaime es mayor que Jorge" "Paco es menor que Jaime"', options: ['verdadera', 'falsa', 'dudosa'], answer: 0 },
+        { q: 'Suponiendo que en la palabra CONSTITUCIONAL, la primera y la segunda letras se intercambiara y también la 3a con la 4o y la 5a con la 6a, etc. escriba (en mayúsculas de imprenta) la letra que en el caso sería la 12a contando de izquierda a derecha.', options: ['A', 'L', 'N', 'O', 'T'], answer: 1 },
+        { q: 'Un número está equivocado en la siguiente serie ¿Cuál debe ir en su lugar? 0-1 3-6-10-15-21-28-34', options: ['30', '31', '32', '33', '36'], answer: 0 },
+        { q: 'Si cuatro y medio metros de tela cuestan 90 pesos ¿Cuántos pesos costarán 2 1⁄2 metros?', options: ['40 pesos', '45 pesos', '50 pesos', '55 pesos', '60 pesos'], answer: 2 },
+        { q: 'La influencia de un hombre en la comunidad en que vive debe depender de su:', options: ['fortuna', 'dignidad', 'sabiduría', 'ambición', 'poder político'], answer: 2 },
+        { q: 'Cuál de las siguientes palabras tiene la misma relación con "poco" que ordinario tiene con respecto a "excepcional"?', options: ['nada', 'algo', 'mucho', 'menos', 'más'], answer: 4 },
+        { q: 'Lo opuesto a traidor es:', options: ['amistoso', 'valiente', 'sabio', 'cobarde', 'leal'], answer: 4 },
+        { q: 'Cuál de las cinco siguientes palabras tiene menos relación con las otras cuatro?', options: ['bueno', 'ancho', 'rojo', 'camino', 'espeso'], answer: 3 },
+        { q: 'Si las dos primeras proposiciones son verdaderas, la tercera es: "Algunos de los amigos de López son cordobeses Algunos de los amigos de López son dentistas" "Algunos de los amigos de López son dentistas cordobeses"', options: ['verdadera', 'falsa', 'no se sabe'], answer: 2 },
+        { q: 'Qué palabra de las que siguen tiene un significado más parecido a "perspicaz"?', options: ['astuto', 'honrado', 'tímido', 'alegre', 'hábil'], answer: 0 },
+        { q: 'Qué significa "ininteligible"?', options: ['Que no se puede entender', 'Que no se puede ver', 'Que no se puede tocar', 'Que no se puede oír', 'Que no se puede decir'], answer: 0 },
+        { q: 'Cuál de las siguientes palabras significa lo mismo que "evidente"?', options: ['dudoso', 'incierto', 'manifiesto', 'oculto', 'escondido'], answer: 2 },
+        { q: 'Indica la palabra que significa lo mismo que "remoto":', options: ['cercano', 'próximo', 'lejano', 'actual', 'reciente'], answer: 2 },
+        { q: 'Qué significa "opulento"?', options: ['Pobre', 'Enfermo', 'Rico', 'Triste', 'Generoso'], answer: 2 },
+        { q: 'Señala el sinónimo de "dilatar":', options: ['contraer', 'reducir', 'acortar', 'alargar', 'limitar'], answer: 3 },
+        { q: 'Qué significa "incipiente"?', options: ['Que tiene experiencia', 'Que está empezando', 'Que es muy inteligente', 'Que es muy rápido', 'Que es muy fuerte'], answer: 1 },
+        { q: 'Cuál de las siguientes palabras es sinónima de "veraz"?', options: ['mentiroso', 'falso', 'auténtico', 'engañoso', 'dudoso'], answer: 2 },
+        { q: 'Señala la palabra que significa lo mismo que "efímero":', options: ['eterno', 'duradero', 'momentáneo', 'constante', 'estable'], answer: 2 },
+        { q: 'Qué significa "indolente"?', options: ['Sensible', 'Compasivo', 'Indiferente', 'Alegre', 'Triste'], answer: 2 },
+        { q: 'Indica el sinónimo de "vehemente":', options: ['Apasionado', 'Tranquilo', 'Débil', 'Tímido', 'Indiferente'], answer: 0 },
+        { q: 'Qué significa "lacónico"?', options: ['Hablador', 'Silencioso', 'Alegre', 'Triste', 'Rápido'], answer: 1 },
+        { q: 'Cuál de las siguientes palabras es sinónima de "inefable"?', options: ['Decible', 'Expresable', 'Indescriptible', 'Claro', 'Evidente'], answer: 2 },
+        { q: 'Señala la palabra que significa lo mismo que "perenne":', options: ['Eterno', 'Temporal', 'Efímero', 'Breve', 'Pasajero'], answer: 0 },
+        { q: 'Qué significa "irrisorio"?', options: ['Serio', 'Grave', 'Importante', 'Ridículo', 'Valioso'], answer: 3 },
+        { q: 'Indica el sinónimo de "misántropo":', options: ['Amigo de la humanidad', 'Filántropo', 'Solitario', 'Sociable', 'Alegre'], answer: 2 },
+        { q: 'Qué significa "abúlico"?', options: ['Con mucha voluntad', 'Sin voluntad', 'Inteligente', 'Rápido', 'Fuerte'], answer: 1 },
+        { q: 'Cuál de las siguientes palabras es sinónima de "nimio"?', options: ['Importante', 'Valioso', 'Fundamental', 'Insignificante', 'Esencial'], answer: 3 },
+        { q: 'Señala la palabra que significa lo mismo que "enervar":', options: ['Fortalecer', 'Vigorizar', 'Debilitar', 'Animar', 'Calmar'], answer: 2 },
+        { q: 'Qué significa "exequias"?', options: ['Alegría', 'Celebración', 'Funeral', 'Boda', 'Fiesta'], answer: 2 },
+        { q: 'Indica el sinónimo de "escéptico":', options: ['Creyente', 'Conflicto', 'Combate', 'Pleito', 'Lucha'], answer: 4 },
+        { q: 'Qué implica la palabra "belicosidad"?', options: ['Creyente', 'Confiado', 'Tranquilo', 'Pacífico', 'Guerrero'], answer: 4 },
+        { q: 'Cuál de los siguientes términos se asemeja a "discordia"?', options: ['Enojo', 'Tranquilidad', 'Paz', 'Amistad', 'Concordia'], answer: 0 },
+        { q: 'Sinónimo de "belicoso":', options: ['Pacífico', 'Tranquilo', 'Calmado', 'Peleonero', 'Amoroso'], answer: 3 },
+        { q: 'El antónimo de "benevolente" es:', options: ['Bondadoso', 'Benéfico', 'Malévolo', 'Amoroso', 'Solidario'], answer: 2 }
+      ]
+    };
+
+    function loadTest() {
+      const difficulty = document.getElementById('difficulty').value;
+      const questions = tests[difficulty];
+      const container = document.getElementById('questions');
+      const form = document.getElementById('testForm');
+      container.innerHTML = '';
+      
+      questions.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.classList.add('question');
+        div.setAttribute('id', `question-${i}`);
+        
+        let questionHTML = `<p><b>${i + 1}. ${q.q}</b></p>`;
+
+        if (q.image) {
+          questionHTML += `<img src="${q.image}" alt="Figura para la pregunta ${i + 1}" style="max-width: 300px; display: block; margin: 10px 0;">`;
+        }
+        
+        let optionsHTML = '';
+        q.options.forEach((opt, j) => {
+          optionsHTML += `<label style="display: block; margin: 5px 0;"><input type="radio" name="q${i}" value="${j}" required> ${opt}</label>`;
+        });
+        
+        div.innerHTML = questionHTML + optionsHTML;
+        container.appendChild(div);
+      });
+
+      form.classList.remove('hidden');
+      document.getElementById('result').innerText = '';
+      
+      let timeLimitInSeconds;
+      if (difficulty === 'easy' || difficulty === 'medium') {
+        timeLimitInSeconds = 5 * 60; // 5 minutos
+      } else if (difficulty === 'psicologico'){
+        timeLimitInSeconds = 30 * 60; // 30 minutos
+      }
+       else {
+        timeLimitInSeconds = 10 * 60; // 10 minutos para el resto
+      }
+      startTimer(timeLimitInSeconds);
+    }
+
+    function startTimer(duration) {
+      let timer = duration, minutes, seconds;
+      const display = document.getElementById('timer');
+      display.classList.remove('hidden');
+
+      clearInterval(timerInterval); 
+
+      timerInterval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = "Tiempo restante: " + minutes + ":" + seconds;
+
+        if (--timer < 0) {
+          clearInterval(timerInterval);
+          alert("¡Se acabó el tiempo! El examen se enviará automáticamente.");
+          document.getElementById('testForm').dispatchEvent(new Event('submit'));
+        }
+      }, 1000);
+    }
+
+ function gradeTest(event) {
+  if (event) event.preventDefault();
+  clearInterval(timerInterval);
+  document.getElementById('timer').classList.add('hidden');
+
+  const difficulty = document.getElementById('difficulty').value;
+  const questions = tests[difficulty];
+  let score = 0;
+
+  questions.forEach((q, i) => {
+    const questionDiv = document.getElementById(`question-${i}`);
+    questionDiv.classList.remove('correct', 'incorrect');
+
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if (selected) {
+      const userAnswer = parseInt(selected.value);
+      if (userAnswer === q.answer) {
+        score++;
+        questionDiv.classList.add('correct');
+      } else {
+        questionDiv.classList.add('incorrect');
+      }
+    }
+  });
+
+  const result = document.getElementById('result');
+  const total = questions.length;
+  let message = '';
+
+  // Lógica específica para el Test Psicológico
+  if (difficulty === 'psicologico') {
+    if (score < 35) {
+      message = `Eres hábil con los números, recuerda la práctica hace al maestro. Obtuviste ${score}/${total}.`;
+      result.style.color = '#fd7e14';
+    } else if (score >= 36 && score <= 45) {
+      message = `Eres muy hábil con los números, puedes mejorar aún más. Obtuviste ${score}/${total}.`;
+      result.style.color = '#28a745';
+    } else if (score >= 46 && score <= 60) {
+      message = `¡Excelente, eres muy talentoso y creativo! Obtuviste ${score}/${total}.`;
+      result.style.color = '#007bff';
+    } else {
+      message = `¡Wow, eres muy creativo y tienes una alta habilidad con los números, recuerda siempre ser humilde y utilizar tus talentos para el bien! Obtuviste ${score}/${total}.`;
+      result.style.color = '#6f42c1';
+    }
+  } else {
+    // Lógica para los otros tests
+    if (score >= total * 0.9) {
+      message = `¡Excelente! Obtuviste ${score}/${total}.`;
+      result.style.color = '#28a745';
+    } else if (score >= total * 0.6) {
+      message = `Vas muy bien, sigue practicando. Obtuviste ${score}/${total}.`;
+      result.style.color = '#fd7e14';
+    } else {
+      message = `Debes seguir practicando. Obtuviste ${score}/${total}.`;
+      result.style.color = '#dc3545';
+    }
+  }
+
+  result.innerText = message;
+  window.scrollTo(0, 0);
+  return false;
+}
+  </script>
+</body>
+</html>
